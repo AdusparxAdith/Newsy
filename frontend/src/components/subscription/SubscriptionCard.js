@@ -1,19 +1,35 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
 
+import useNotification from '../hooks/useNotification';
+
 export default function SubscriptionCard() {
   const [email, setEmail] = useState('');
+  const [Notification, notify] = useNotification();
 
   const submit = async () => {
+    if (!email)
+      return notify({
+        type: 'failure',
+        message: 'Please enter an email address!',
+      });
     try {
       await Axios.post('/api/newsy/', {
         email,
         date: new Date().toISOString(),
       });
-      alert('Successfully added!');
+      notify({ type: 'success', message: "You've been registered!" });
     } catch (error) {
-      console.log(error.message);
-      alert('Something went wrong! Try again later.');
+      if (error.message.includes(400))
+        return notify({
+          type: 'failure',
+          message: 'Please try another email id',
+        });
+
+      notify({
+        type: 'failure',
+        message: 'Something went wrong! Try again later.',
+      });
     }
   };
 
@@ -49,6 +65,7 @@ export default function SubscriptionCard() {
           don't worry, we won't spam you
         </p>
       </div>
+      <Notification />
     </div>
   );
 }

@@ -1,5 +1,6 @@
-import SubscriptionCard from './components/subscription/SubscriptionCard';
 import './index.css';
+
+import SubscriptionCard from './components/subscription/SubscriptionCard';
 
 function App() {
   return (

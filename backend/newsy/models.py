@@ -5,7 +5,7 @@ from django.db import models
 
 
 class Subscription(models.Model):
-    email = models.EmailField(max_length=254)
+    email = models.EmailField(max_length=254, unique=True)
     date = models.DateTimeField()
 
     def _str_(self):
