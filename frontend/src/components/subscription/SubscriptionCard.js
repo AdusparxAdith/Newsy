@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
+import load from './loading.gif';
 
 import useNotification from '../hooks/useNotification';
 
 export default function SubscriptionCard() {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const [Notification, notify] = useNotification();
 
   const submit = async () => {
@@ -14,12 +17,15 @@ export default function SubscriptionCard() {
         message: 'Please enter an email address!',
       });
     try {
+      setLoading(true);
       await Axios.post('/api/newsy/', {
         email,
         date: new Date().toISOString(),
       });
+      setTimeout(() => setLoading(false), 300);
       notify({ type: 'success', message: "You've been registered!" });
     } catch (error) {
+      setTimeout(() => setLoading(false), 300);
       if (error.message.includes(400))
         return notify({
           type: 'failure',
@@ -56,9 +62,15 @@ export default function SubscriptionCard() {
           />
           <div
             onClick={submit}
-            className="flex justify-center items-center bg-gray-100 mb-4 p-4 outline-none rounded-none border-none text-gray-500 cursor-pointer hover:text-gray-700"
+            className={`flex justify-center items-center bg-gray-100 mb-4 p-4 outline-none rounded-none border-none text-gray-500 cursor-pointer hover:text-gray-700 ${
+              loading && 'pointer-events-none'
+            }`}
           >
-            <i className="fas fa-paper-plane"></i>
+            {loading ? (
+              <i className="fas fa-spinner animate-spin"></i>
+            ) : (
+              <i className="fas fa-paper-plane "></i>
+            )}
           </div>
         </div>
         <p className="text-gray-300 text-center text-xs">
